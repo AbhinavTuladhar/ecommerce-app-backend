@@ -1,45 +1,32 @@
 import {
-  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 import { User } from 'src/entities/user.entity';
-import { Repository } from 'typeorm';
-import { LoginDto, RegisterDto } from './dto';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { RegisterDto } from 'src/user/dto';
+import { UserService } from 'src/user/user.service';
+import { LoginDto } from './dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private usersRepo: Repository<User>,
+    private userService: UserService,
     private jwtService: JwtService,
     private configService: ConfigService
   ) {}
 
   async register(dto: RegisterDto): Promise<User> {
-    const { email, password } = dto;
-
-    const isEmailUsed = Boolean(await this.usersRepo.findOneBy({ email }));
-    if (isEmailUsed) {
-      throw new ConflictException('Email is already in use.');
-    }
-
-    const hash = await argon.hash(password);
-    const newUser = this.usersRepo.create({
-      ...dto,
-      password: hash,
-    });
-    return this.usersRepo.save(newUser);
+    return this.userService.register(dto);
   }
 
   async login(dto: LoginDto) {
     const { email, password } = dto;
 
-    const user = await this.usersRepo.findOneBy({ email });
+    const user = await this.userService.findByEmail(email);
     if (!user) {
       throw new NotFoundException('User not found.');
     }
@@ -65,9 +52,5 @@ export class AuthService {
       secret: this.configService.get('JWT_SECRET'),
     });
     return token;
-  }
-
-  getUsers() {
-    return this.usersRepo.find();
   }
 }
