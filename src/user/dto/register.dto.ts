@@ -1,7 +1,7 @@
 import { IsEmail, IsEnum, IsString } from 'class-validator';
 import { UserRole } from 'src/entities/user.entity';
 
-export class CreateUserDto {
+export class RegisterDto {
   @IsString()
   userName: string;
 
@@ -9,7 +9,7 @@ export class CreateUserDto {
   email: string;
 
   @IsString()
-  passwordHash: string;
+  password: string;
 
   @IsEnum(UserRole)
   role: UserRole;
