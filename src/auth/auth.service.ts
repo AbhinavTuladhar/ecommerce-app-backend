@@ -44,6 +44,20 @@ export class AuthService {
     };
   }
 
+  async validateUser(email: string, password: string) {
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    const doesPasswordMatch = await argon.verify(user.password, password);
+    if (!doesPasswordMatch) {
+      throw new ForbiddenException('The password is incorrect.');
+    }
+
+    return user;
+  }
+
   async getToken(user: User) {
     const payload = { sub: user.id };
     const token = await this.jwtService.signAsync(payload, {
