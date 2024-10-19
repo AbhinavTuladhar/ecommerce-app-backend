@@ -4,7 +4,7 @@ import { RegisterDto } from 'src/user/dto';
 
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto';
-import { JwtAuthGuard } from './jwt-auth-guard';
+import { JwtAuthGuard } from './guard';
 
 @Controller('auth')
 export class AuthController {
