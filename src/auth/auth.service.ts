@@ -9,10 +9,16 @@ import * as argon from 'argon2';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import { LoginDto, RegisterDto } from './dto';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectRepository(User) private usersRepo: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private usersRepo: Repository<User>,
+    private jwtService: JwtService,
+    private configService: ConfigService
+  ) {}
 
   async register(dto: RegisterDto): Promise<User> {
     const { email, password } = dto;
@@ -43,9 +49,22 @@ export class AuthService {
       throw new ForbiddenException('The password is incorrect.');
     }
 
+    const token = await this.getToken(user);
+
     return {
       message: 'Successfully logged in!',
+      access_token: token,
     };
+  }
+
+  async getToken(user: User) {
+    const payload = { sub: user.id };
+    const token = await this.jwtService.signAsync(payload, {
+      algorithm: 'HS256',
+      expiresIn: '30m',
+      secret: this.configService.get('JWT_SECRET'),
+    });
+    return token;
   }
 
   getUsers() {
