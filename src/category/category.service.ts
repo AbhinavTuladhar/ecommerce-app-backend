@@ -13,7 +13,7 @@ export class CategoryService {
   ) {}
 
   async findAll() {
-    return this.categoriesRepo.find();
+    return this.categoriesRepo.find({ relations: ['products'] });
   }
   async createCategory(dto: CreateCategoryDto) {
     const category = this.categoriesRepo.create({ name: dto.name });
