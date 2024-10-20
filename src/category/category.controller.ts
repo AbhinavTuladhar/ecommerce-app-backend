@@ -22,20 +22,20 @@ export class CategoryController {
   }
 
   @Post()
-  createCategory(@Body() dto: CreateCategoryDto) {
-    return this.categoryService.createCategory(dto);
+  create(@Body() dto: CreateCategoryDto) {
+    return this.categoryService.create(dto);
   }
 
   @Patch('/:id')
-  updateCategory(
+  update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: CreateCategoryDto
   ) {
-    return this.categoryService.updateCategory(id, dto);
+    return this.categoryService.update(id, dto);
   }
 
   @Delete('/:id')
-  deleteCategory(@Param('id', new ParseUUIDPipe()) id: string) {
-    return this.categoryService.deleteCategory(id);
+  delete(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.categoryService.delete(id);
   }
 }
