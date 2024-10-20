@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CategoryService } from 'src/category/category.service';
 import { Product } from 'src/entities/product.entity';
 
+import { UpdateProductDto } from './dto';
 import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
@@ -27,6 +28,19 @@ export class ProductService {
 
     const category = await this.categoryService.findCategoryById(categoryId);
     const product = this.productRepo.create({ category, ...rest });
+    return this.productRepo.save(product);
+  }
+
+  async update(id: string, dto: UpdateProductDto) {
+    const product = await this.findById(id);
+    const { categoryId, ...rest } = dto;
+
+    // Change the category of the product only if the corresponding category id is provided.
+    if (categoryId) {
+      const category = await this.categoryService.findCategoryById(categoryId);
+      product.category = category;
+    }
+    Object.assign(product, rest);
     return this.productRepo.save(product);
   }
 

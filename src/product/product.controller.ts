@@ -5,10 +5,11 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 
-import { CreateProductDto } from './dto/create-product.dto';
+import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductService } from './product.service';
 
 @Controller('product')
@@ -28,6 +29,14 @@ export class ProductController {
   @Post()
   create(@Body() dto: CreateProductDto) {
     return this.productService.create(dto);
+  }
+
+  @Patch('/:id')
+  update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() dto: UpdateProductDto
+  ) {
+    return this.productService.update(id, dto);
   }
 
   @Delete('/:id')
