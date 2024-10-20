@@ -26,7 +26,7 @@ export class ProductService {
   async create(dto: CreateProductDto) {
     const { categoryId, ...rest } = dto;
 
-    const category = await this.categoryService.findCategoryById(categoryId);
+    const category = await this.categoryService.findById(categoryId);
     const product = this.productRepo.create({ category, ...rest });
     return this.productRepo.save(product);
   }
@@ -37,7 +37,7 @@ export class ProductService {
 
     // Change the category of the product only if the corresponding category id is provided.
     if (categoryId) {
-      const category = await this.categoryService.findCategoryById(categoryId);
+      const category = await this.categoryService.findById(categoryId);
       product.category = category;
     }
     Object.assign(product, rest);
