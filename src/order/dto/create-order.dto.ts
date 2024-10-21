@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-class OrderItemDto {
+export class OrderItemDto {
   @IsNotEmpty()
   @IsString()
   @IsUUID()

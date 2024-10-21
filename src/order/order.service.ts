@@ -7,6 +7,7 @@ import { ProductService } from 'src/product/product.service';
 import { UserService } from 'src/user/user.service';
 
 import { CreateOrderDto } from './dto';
+import { OrderItemDto } from './dto/create-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -28,20 +29,8 @@ export class OrderService {
     const { userId, items } = dto;
 
     const user = await this.userService.findById(userId);
-
-    const orderItems: OrderItem[] = [];
-    let total = 0;
-
-    for (const item of items) {
-      const product = await this.productService.findById(item.productId);
-      const orderItem = this.orderItemRepo.create({
-        product,
-        quantity: item.quantity,
-        price: product.price * item.quantity,
-      });
-      orderItems.push(orderItem);
-      total += orderItem.price;
-    }
+    const orderItems = await this.createOrderItems(items);
+    const total = this.calculateTotal(orderItems);
 
     const order = this.orderRepo.create({
       user,
@@ -51,5 +40,24 @@ export class OrderService {
     });
 
     return this.orderRepo.save(order);
+  }
+
+  private async createOrderItems(items: OrderItemDto[]) {
+    const orderItems: OrderItem[] = [];
+
+    for (const item of items) {
+      const product = await this.productService.findById(item.productId);
+      const orderItem = this.orderItemRepo.create({
+        product,
+        quantity: item.quantity,
+        price: product.price * item.quantity,
+      });
+      orderItems.push(orderItem);
+    }
+    return orderItems;
+  }
+
+  private calculateTotal(items: OrderItem[]) {
+    return items.reduce((total, item) => total + item.price, 0);
   }
 }
