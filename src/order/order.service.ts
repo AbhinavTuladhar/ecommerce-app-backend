@@ -6,7 +6,7 @@ import { Order, OrderItem } from 'src/entities/order.entity';
 import { ProductService } from 'src/product/product.service';
 import { UserService } from 'src/user/user.service';
 
-import { CreateOrderDto } from './dto';
+import { CreateOrderDto, UpdateOrderStatusDto } from './dto';
 import { OrderItemDto } from './dto/create-order.dto';
 
 @Injectable()
@@ -46,8 +46,22 @@ export class OrderService {
     return this.orderRepo.save(order);
   }
 
+  async updateStatus(id: string, dto: UpdateOrderStatusDto) {
+    const order = await this.findById(id);
+    order.status = dto.status;
+    return this.orderRepo.save(order);
+  }
+
+  async deleteOrder(id: string) {
+    const order = await this.findById(id);
+    return this.orderRepo.remove(order);
+  }
+
   async findById(id: string) {
-    const order = await this.orderRepo.findOneBy({ id });
+    const order = await this.orderRepo.findOne({
+      where: { id },
+      relations: ['items', 'user', 'items.product'],
+    });
     if (!order) {
       throw new NotFoundException('Order not found');
     }

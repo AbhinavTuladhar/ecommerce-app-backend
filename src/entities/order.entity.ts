@@ -38,7 +38,10 @@ export class Order {
   @ManyToOne(() => User, (user) => user.orders)
   user: User;
 
-  @OneToMany(() => OrderItem, (OrderItem) => OrderItem.order, { cascade: true })
+  @OneToMany(() => OrderItem, (OrderItem) => OrderItem.order, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   items: OrderItem[];
 }
 
@@ -53,7 +56,7 @@ export class OrderItem {
   @Column('int')
   price: number;
 
-  @ManyToOne(() => Order, (order) => order.items)
+  @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
   order: Order;
 
   @ManyToOne(() => Product, (product) => product.id)

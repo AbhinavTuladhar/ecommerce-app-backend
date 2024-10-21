@@ -28,6 +28,6 @@ export class User {
   })
   role: UserRole;
 
-  @OneToMany(() => Order, (order) => order.user)
+  @OneToMany(() => Order, (order) => order.user, { onDelete: 'CASCADE' })
   orders: Order[];
 }
