@@ -9,7 +9,8 @@ import { CreateCategoryDto } from './dto';
 @Injectable()
 export class CategoryService {
   constructor(
-    @InjectRepository(Category) private categoriesRepo: Repository<Category>
+    @InjectRepository(Category)
+    private readonly categoriesRepo: Repository<Category>
   ) {}
 
   async findAll() {
