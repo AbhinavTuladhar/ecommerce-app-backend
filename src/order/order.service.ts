@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -18,6 +18,10 @@ export class OrderService {
     private readonly productService: ProductService,
     private readonly userService: UserService
   ) {}
+
+  async getById(id: string) {
+    return this.findById(id);
+  }
 
   async findAll() {
     return this.orderRepo.find({
@@ -40,6 +44,14 @@ export class OrderService {
     });
 
     return this.orderRepo.save(order);
+  }
+
+  async findById(id: string) {
+    const order = await this.orderRepo.findOneBy({ id });
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    return order;
   }
 
   private async createOrderItems(items: OrderItemDto[]) {
