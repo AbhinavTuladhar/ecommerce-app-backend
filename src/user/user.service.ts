@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon from 'argon2';
 import { Repository } from 'typeorm';
@@ -17,6 +21,14 @@ export class UserService {
     return this.usersRepo.findOneBy({ email });
   }
 
+  async findById(id: string) {
+    const user = await this.usersRepo.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+    return user;
+  }
+
   async register(dto: RegisterDto) {
     const { email, password } = dto;
 
@@ -31,5 +43,9 @@ export class UserService {
       password: hash,
     });
     return this.usersRepo.save(newUser);
+  }
+
+  async findAll() {
+    return this.usersRepo.find();
   }
 }

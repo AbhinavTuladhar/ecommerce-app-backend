@@ -39,7 +39,7 @@ export class Order {
   user: User;
 
   @OneToMany(() => OrderItem, (OrderItem) => OrderItem.order, { cascade: true })
-  items: OrderItem;
+  items: OrderItem[];
 }
 
 @Entity()
