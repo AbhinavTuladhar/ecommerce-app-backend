@@ -9,7 +9,9 @@ import { RegisterDto } from './dto';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private usersRepo: Repository<User>) {}
+  constructor(
+    @InjectRepository(User) private readonly usersRepo: Repository<User>
+  ) {}
 
   async findByEmail(email: string) {
     return this.usersRepo.findOneBy({ email });

@@ -14,7 +14,7 @@ import { CreateCategoryDto } from './dto';
 
 @Controller('category')
 export class CategoryController {
-  constructor(private categoryService: CategoryService) {}
+  constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
   findAll() {

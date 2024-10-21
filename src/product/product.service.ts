@@ -11,8 +11,9 @@ import { CreateProductDto } from './dto/create-product.dto';
 @Injectable()
 export class ProductService {
   constructor(
-    @InjectRepository(Product) private productRepo: Repository<Product>,
-    private categoryService: CategoryService
+    @InjectRepository(Product)
+    private readonly productRepo: Repository<Product>,
+    private readonly categoryService: CategoryService
   ) {}
 
   getAll() {
