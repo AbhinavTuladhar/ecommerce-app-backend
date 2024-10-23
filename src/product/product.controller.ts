@@ -10,6 +10,8 @@ import {
   Post,
 } from '@nestjs/common';
 
+import { ResourceName } from 'src/decorators/resource-name/resource-name.decorator';
+
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductService } from './product.service';
 
@@ -29,11 +31,13 @@ export class ProductController {
   }
 
   @Post()
+  @ResourceName('Product')
   create(@Body() dto: CreateProductDto) {
     return this.productService.create(dto);
   }
 
   @Patch('/:id')
+  @ResourceName('Product')
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdateProductDto
@@ -42,6 +46,7 @@ export class ProductController {
   }
 
   @Delete('/:id')
+  @ResourceName('Product')
   delete(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.productService.delete(id);
   }

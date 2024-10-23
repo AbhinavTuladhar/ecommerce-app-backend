@@ -9,6 +9,8 @@ import {
   Post,
 } from '@nestjs/common';
 
+import { ResourceName } from 'src/decorators/resource-name/resource-name.decorator';
+
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto';
 
@@ -22,11 +24,13 @@ export class CategoryController {
   }
 
   @Post()
+  @ResourceName('Category')
   create(@Body() dto: CreateCategoryDto) {
     return this.categoryService.create(dto);
   }
 
   @Patch('/:id')
+  @ResourceName('Category')
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: CreateCategoryDto
@@ -35,6 +39,7 @@ export class CategoryController {
   }
 
   @Delete('/:id')
+  @ResourceName('Category')
   delete(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.categoryService.delete(id);
   }
