@@ -1,4 +1,10 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth-guard';
 import { RoleGuard } from 'src/auth/role/role.guard';
@@ -11,8 +17,9 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Roles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, RoleGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Roles(UserRole.ADMIN)
   @Get()
   findAll() {
     return this.userService.findAll();

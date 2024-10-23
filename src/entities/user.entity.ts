@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Order } from './order.entity';
@@ -19,6 +20,7 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column({
@@ -30,4 +32,8 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user, { onDelete: 'CASCADE' })
   orders: Order[];
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 }
