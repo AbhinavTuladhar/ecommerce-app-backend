@@ -30,6 +30,7 @@ export class CategoryController {
   }
 
   @Patch('/:id')
+  @ResourceName('Category')
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: CreateCategoryDto
@@ -38,6 +39,7 @@ export class CategoryController {
   }
 
   @Delete('/:id')
+  @ResourceName('Category')
   delete(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.categoryService.delete(id);
   }

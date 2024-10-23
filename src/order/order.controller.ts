@@ -35,6 +35,7 @@ export class OrderController {
   }
 
   @Patch('/:id')
+  @ResourceName('Order')
   updateStatus(
     @Body() dto: UpdateOrderStatusDto,
     @Param('id', new ParseUUIDPipe()) id: string
@@ -43,6 +44,7 @@ export class OrderController {
   }
 
   @Delete('/:id')
+  @ResourceName('Order')
   deleteOrder(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.orderService.deleteOrder(id);
   }

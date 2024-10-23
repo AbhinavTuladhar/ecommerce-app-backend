@@ -37,6 +37,7 @@ export class ProductController {
   }
 
   @Patch('/:id')
+  @ResourceName('Product')
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() dto: UpdateProductDto
@@ -45,6 +46,7 @@ export class ProductController {
   }
 
   @Delete('/:id')
+  @ResourceName('Product')
   delete(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.productService.delete(id);
   }
