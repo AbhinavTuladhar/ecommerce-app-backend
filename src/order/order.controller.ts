@@ -9,6 +9,8 @@ import {
   Post,
 } from '@nestjs/common';
 
+import { ResourceName } from 'src/decorators/resource-name/resource-name.decorator';
+
 import { CreateOrderDto, UpdateOrderStatusDto } from './dto';
 import { OrderService } from './order.service';
 
@@ -27,6 +29,7 @@ export class OrderController {
   }
 
   @Post()
+  @ResourceName('Order')
   create(@Body() dto: CreateOrderDto) {
     return this.orderService.create(dto);
   }

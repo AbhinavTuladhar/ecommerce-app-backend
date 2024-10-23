@@ -9,6 +9,8 @@ import {
   Post,
 } from '@nestjs/common';
 
+import { ResourceName } from 'src/decorators/resource-name/resource-name.decorator';
+
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto';
 
@@ -22,6 +24,7 @@ export class CategoryController {
   }
 
   @Post()
+  @ResourceName('Category')
   create(@Body() dto: CreateCategoryDto) {
     return this.categoryService.create(dto);
   }

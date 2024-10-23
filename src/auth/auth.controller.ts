@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { ResourceName } from 'src/decorators/resource-name/resource-name.decorator';
 import { RegisterDto } from 'src/user/dto';
 
 import { AuthService } from './auth.service';
@@ -20,6 +21,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @ResourceName('User')
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }

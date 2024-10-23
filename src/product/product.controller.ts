@@ -10,6 +10,8 @@ import {
   Post,
 } from '@nestjs/common';
 
+import { ResourceName } from 'src/decorators/resource-name/resource-name.decorator';
+
 import { CreateProductDto, UpdateProductDto } from './dto';
 import { ProductService } from './product.service';
 
@@ -29,6 +31,7 @@ export class ProductController {
   }
 
   @Post()
+  @ResourceName('Product')
   create(@Body() dto: CreateProductDto) {
     return this.productService.create(dto);
   }

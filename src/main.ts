@@ -1,8 +1,9 @@
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
+import { SuccessPostResponseInterceptor } from './interceptors/success-post-response/success-post-response.interceptor';
 import { SuccessResponseInterceptor } from './interceptors/success-response/success-response.interceptor';
 
 async function bootstrap() {
@@ -19,7 +20,10 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, documentFactory);
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-  app.useGlobalInterceptors(new SuccessResponseInterceptor());
+  app.useGlobalInterceptors(
+    new SuccessResponseInterceptor(),
+    new SuccessPostResponseInterceptor(app.get(Reflector))
+  );
   await app.listen(3000);
 }
 bootstrap();
