@@ -61,7 +61,7 @@ export class AuthService {
   }
 
   async getToken(user: User) {
-    const payload = { sub: user.id };
+    const payload = { id: user.id, role: user.role };
     const token = await this.jwtService.signAsync(payload, {
       algorithm: 'HS256',
       expiresIn: '30m',
