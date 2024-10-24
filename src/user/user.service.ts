@@ -4,10 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as argon from 'argon2';
 import { Repository } from 'typeorm';
 
 import { User } from 'src/entities/user.entity';
+import { hashPassword } from 'src/utils/argon.utils';
 
 import { RegisterDto } from './dto';
 
@@ -37,7 +37,7 @@ export class UserService {
       throw new ConflictException('Email is already in use.');
     }
 
-    const hash = await argon.hash(password);
+    const hash = await hashPassword(password);
     const newUser = this.usersRepo.create({
       ...dto,
       password: hash,
