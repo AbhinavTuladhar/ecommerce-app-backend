@@ -21,14 +21,6 @@ export class UserService {
     return this.usersRepo.findOneBy({ email });
   }
 
-  async findById(id: string) {
-    const user = await this.usersRepo.findOneBy({ id });
-    if (!user) {
-      throw new NotFoundException('User not found.');
-    }
-    return user;
-  }
-
   async register(dto: RegisterDto) {
     const { email, password } = dto;
 
@@ -45,7 +37,20 @@ export class UserService {
     return this.usersRepo.save(newUser);
   }
 
+  async delete(id: string) {
+    const user = await this.findById(id);
+    return this.usersRepo.remove(user);
+  }
+
   async findAll() {
     return this.usersRepo.find();
+  }
+
+  async findById(id: string) {
+    const user = await this.usersRepo.findOneBy({ id });
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+    return user;
   }
 }
