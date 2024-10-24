@@ -8,6 +8,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 
 import { ResourceName } from 'src/decorators/resource-name/resource-name.decorator';
@@ -21,8 +22,8 @@ export class ProductController {
 
   @HttpCode(200)
   @Get()
-  getAll() {
-    return this.productService.getAll();
+  getAll(@Query() query: { category?: string }) {
+    return this.productService.getAll(query.category);
   }
 
   @Get('/:id')

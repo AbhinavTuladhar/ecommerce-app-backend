@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 
 import { CategoryService } from 'src/category/category.service';
 import { Product } from 'src/entities/product.entity';
@@ -16,8 +16,16 @@ export class ProductService {
     private readonly categoryService: CategoryService
   ) {}
 
-  getAll() {
-    return this.productRepo.find({ relations: ['category'] });
+  getAll(category?: string) {
+    if (!category) {
+      return this.productRepo.find({ relations: ['category'] });
+    }
+
+    return this.productRepo.find({
+      where: {
+        category: { name: ILike(category) },
+      },
+    });
   }
 
   async getById(id: string) {
