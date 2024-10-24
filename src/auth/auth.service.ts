@@ -5,11 +5,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import * as argon from 'argon2';
 
 import { User } from 'src/entities/user.entity';
 import { RegisterDto } from 'src/user/dto';
 import { UserService } from 'src/user/user.service';
+import { verifyPassword } from 'src/utils/argon.utils';
 
 import { LoginDto } from './dto';
 
@@ -33,7 +33,7 @@ export class AuthService {
       throw new NotFoundException('User not found.');
     }
 
-    const doesPasswordMatch = await argon.verify(user.password, password);
+    const doesPasswordMatch = await verifyPassword(user.password, password);
     if (!doesPasswordMatch) {
       throw new ForbiddenException('The password is incorrect.');
     }
@@ -52,7 +52,7 @@ export class AuthService {
       throw new NotFoundException('User not found.');
     }
 
-    const doesPasswordMatch = await argon.verify(user.password, password);
+    const doesPasswordMatch = await verifyPassword(user.password, password);
     if (!doesPasswordMatch) {
       throw new ForbiddenException('The password is incorrect.');
     }
