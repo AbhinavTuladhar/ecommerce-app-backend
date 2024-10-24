@@ -24,7 +24,7 @@ export class SuccessChangeInterceptor implements NestInterceptor {
       context.getHandler()
     );
 
-    if (!this.requestMethods.includes(request.method)) {
+    if (!this.requestMethods.includes(request.method) || !resourceName) {
       return next.handle();
     }
 
