@@ -17,6 +17,7 @@ describe('UserService', () => {
     findOneBy: jest.fn(),
     save: jest.fn(),
     create: jest.fn(),
+    find: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -32,6 +33,10 @@ describe('UserService', () => {
 
     service = module.get<UserService>(UserService);
     userRepository = module.get<Repository<User>>(repositoryToken);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -99,6 +104,54 @@ describe('UserService', () => {
         role: UserRole.CUSTOMER,
         password: 'hashedPassword',
         orders: [],
+      });
+    });
+  });
+
+  describe('fetching users', () => {
+    it('should fetch a list of all the users', async () => {
+      // Arrange
+      const userList: User[] = [
+        {
+          email: 'pCz0H@example.com',
+          userName: 'username',
+          role: UserRole.CUSTOMER,
+          password: 'hashedPassword',
+          id: '1',
+          orders: [],
+        },
+      ];
+      jest.spyOn(userRepository, 'find').mockResolvedValue(userList);
+
+      // Act
+      const result = await service.findAll();
+
+      // Assert
+      expect(result).toEqual(userList);
+    });
+
+    it('should return a user on the basis of id', async () => {
+      // Arrange
+      const userId = '1';
+
+      const user: User = {
+        id: userId,
+        email: 'pCz0H@example.com',
+        userName: 'username',
+        role: UserRole.CUSTOMER,
+        password: 'hashedPassword',
+        orders: [],
+      };
+
+      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(user);
+
+      // Act
+      const result = await service.findById(userId);
+
+      // Assert
+      expect(result).toEqual(user);
+      expect(userRepository.findOneBy).toHaveBeenCalledWith({
+        id: userId,
       });
     });
   });
