@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Category } from 'src/entities/category.entity';
 
 import { CategoryService } from './category.service';
+import { CreateCategoryDto } from './dto';
 
 describe('CategoryService', () => {
   let service: CategoryService;
@@ -17,6 +18,7 @@ describe('CategoryService', () => {
     remove: jest.fn(),
     findOneBy: jest.fn(),
     find: jest.fn(),
+    findById: jest.fn(),
   };
 
   const category: Category = {
@@ -74,5 +76,41 @@ describe('CategoryService', () => {
     // Assert
     expect(result).toEqual(category);
     expect(mockRepo.findOneBy).toHaveBeenCalledWith({ id: '1' });
+  });
+
+  it('create -> should create a category and return it', async () => {
+    // Arrange
+    const createDto: CreateCategoryDto = {
+      name: 'category',
+    };
+    const createdCategory: Category = {
+      id: '1',
+      name: 'category',
+      products: [],
+    };
+    jest.spyOn(mockRepo, 'create').mockReturnValue(createdCategory);
+    jest.spyOn(mockRepo, 'save').mockResolvedValue(createdCategory);
+
+    // Act
+    const result = await service.create(createDto);
+
+    // Assert
+    expect(mockRepo.create).toHaveBeenCalledWith(createDto);
+    expect(mockRepo.save).toHaveBeenCalledWith(createdCategory);
+    expect(result).toEqual(createdCategory);
+  });
+
+  it('delete -> should delete a category given a specific id', async () => {
+    // Arrange
+    jest.spyOn(mockRepo, 'findOneBy').mockResolvedValue(category);
+    jest.spyOn(mockRepo, 'remove').mockResolvedValue(category);
+
+    // Act
+    const result = await service.delete('1');
+
+    // Assert
+    expect(mockRepo.findOneBy).toHaveBeenCalledWith({ id: '1' });
+    expect(mockRepo.remove).toHaveBeenCalledWith(category);
+    expect(result).toEqual(category);
   });
 });
