@@ -19,6 +19,12 @@ describe('CategoryService', () => {
     find: jest.fn(),
   };
 
+  const category: Category = {
+    id: '1',
+    name: 'category',
+    products: [],
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -47,11 +53,6 @@ describe('CategoryService', () => {
 
   it('findAll -> should return a list of all categories', async () => {
     // Arrange
-    const category: Category = {
-      id: '1',
-      name: 'category',
-      products: [],
-    };
     const categoryData = [category];
     jest.spyOn(mockRepo, 'find').mockResolvedValue(categoryData);
 
@@ -61,5 +62,17 @@ describe('CategoryService', () => {
     // Assert
     expect(result).toEqual(categoryData);
     expect(mockRepo.find).toHaveBeenCalled();
+  });
+
+  it('findOne -> should return a category on the basis of the id', async () => {
+    // Arrange
+    jest.spyOn(mockRepo, 'findOneBy').mockResolvedValue(category);
+
+    // Act
+    const result = await service.findById('1');
+
+    // Assert
+    expect(result).toEqual(category);
+    expect(mockRepo.findOneBy).toHaveBeenCalledWith({ id: '1' });
   });
 });
