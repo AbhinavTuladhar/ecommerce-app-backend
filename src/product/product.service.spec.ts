@@ -135,4 +135,18 @@ describe('ProductService', () => {
     expect(mockProductRepo.save).toHaveBeenCalledWith(createdProduct);
     expect(result).toEqual(createdProduct);
   });
+
+  it('delete -> should delete a product, given a specific id', async () => {
+    // Arrange
+    jest.spyOn(mockProductRepo, 'findOneBy').mockResolvedValue(product);
+    jest.spyOn(mockProductRepo, 'remove').mockResolvedValue(product);
+
+    // Act
+    const result = await service.delete('1');
+
+    // Assert
+    expect(mockProductRepo.findOneBy).toHaveBeenCalledWith({ id: '1' });
+    expect(mockProductRepo.remove).toHaveBeenCalledWith(product);
+    expect(result).toEqual(product);
+  });
 });
