@@ -100,6 +100,30 @@ describe('CategoryService', () => {
     expect(result).toEqual(createdCategory);
   });
 
+  it('update -> should update a category given an id', async () => {
+    // Arrange
+    jest.spyOn(mockRepo, 'findOneBy').mockResolvedValue(category);
+    const createDto: CreateCategoryDto = {
+      name: 'updatedCategory',
+    };
+
+    const updatedCategory: Category = {
+      id: '1',
+      name: 'updatedCategory',
+      products: [],
+    };
+
+    jest.spyOn(mockRepo, 'save').mockResolvedValue(updatedCategory);
+
+    // Act
+    const result = await service.update('1', createDto);
+
+    // Assert
+    expect(mockRepo.findOneBy).toHaveBeenCalledWith({ id: '1' });
+    expect(mockRepo.save).toHaveBeenCalledWith(updatedCategory);
+    expect(result).toEqual(updatedCategory);
+  });
+
   it('delete -> should delete a category given a specific id', async () => {
     // Arrange
     jest.spyOn(mockRepo, 'findOneBy').mockResolvedValue(category);
