@@ -1,29 +1,15 @@
-import { Injectable } from '@nestjs/common';
-
-import { CreateImageUploadDto } from './dto/create-image-upload.dto';
-import { UpdateImageUploadDto } from './dto/update-image-upload.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ImageUploadService {
-  create(createImageUploadDto: CreateImageUploadDto) {
-    console.log(createImageUploadDto);
-    return 'This action adds a new imageUpload';
-  }
+  handleFileUpload(file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
 
-  findAll() {
-    return `This action returns all imageUpload`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} imageUpload`;
-  }
-
-  update(id: number, updateImageUploadDto: UpdateImageUploadDto) {
-    console.log(updateImageUploadDto);
-    return `This action updates a #${id} imageUpload`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} imageUpload`;
+    return {
+      message: 'File uploaded successfully',
+      filePath: file.path,
+    };
   }
 }
