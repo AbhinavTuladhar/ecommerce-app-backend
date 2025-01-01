@@ -19,6 +19,9 @@ export class Product {
   @Column('integer')
   quantity: number;
 
+  @Column('text', { nullable: true })
+  image: string | null;
+
   @ManyToOne(() => Category, (category) => category.products, {
     onDelete: 'CASCADE',
   })

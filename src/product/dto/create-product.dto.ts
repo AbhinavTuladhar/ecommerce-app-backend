@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsString, IsUUID, Min } from 'class-validator';
+import { IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 export class CreateProductDto {
   @ApiProperty()
   @IsString()
@@ -11,12 +11,16 @@ export class CreateProductDto {
 
   @ApiProperty()
   @IsInt()
-  @Min(0, { message: 'Price cannot be negative' })
+  @Min(0, { message: 'price cannot be negative' })
   price: number;
 
   @ApiProperty()
+  @IsOptional()
+  image: string | null;
+
+  @ApiProperty()
   @IsInt()
-  @Min(0, { message: 'Quantity cannot be negative' })
+  @Min(0, { message: 'quantity cannot be negative' })
   quantity: number;
 
   @ApiProperty()
