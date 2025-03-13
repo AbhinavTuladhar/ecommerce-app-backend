@@ -24,6 +24,7 @@ async function bootstrap() {
     new SuccessResponseInterceptor(),
     new SuccessChangeInterceptor(app.get(Reflector))
   );
+  app.enableCors();
   await app.listen(3000);
 }
 bootstrap();
