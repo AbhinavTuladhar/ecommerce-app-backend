@@ -14,7 +14,7 @@ import { RegisterDto } from 'src/user/dto';
 
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto';
-import { JwtAuthGuard } from './guard';
+import { JwtAuthGuard, RefreshTokenGuard } from './guard';
 
 @Controller('auth')
 export class AuthController {
@@ -36,5 +36,15 @@ export class AuthController {
   @Get('profile')
   getProfile(@Req() req) {
     return req.user;
+  }
+
+  @UseGuards(RefreshTokenGuard)
+  @Get('refresh')
+  refreshTokens(@Req() req) {
+    const userId = req.user.id as string;
+    const refreshToken = req.user.refreshToken as string;
+
+    // return req.user;
+    return this.authService.refreshTokens(userId, refreshToken);
   }
 }

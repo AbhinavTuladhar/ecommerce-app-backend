@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import { hashPassword } from 'src/utils/argon.utils';
 
-import { RegisterDto } from './dto';
+import { RegisterDto, UpdateUserDto } from './dto';
 
 @Injectable()
 export class UserService {
@@ -40,6 +40,12 @@ export class UserService {
   async delete(id: string) {
     const user = await this.findById(id);
     return this.usersRepo.remove(user);
+  }
+
+  async update(id: string, dto: UpdateUserDto) {
+    const user = await this.findById(id);
+    await this.usersRepo.update(user.id, dto);
+    return this.usersRepo.findOneBy({ id });
   }
 
   async findAll() {
