@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { SuccessChangeInterceptor } from './interceptors/success-change/success-change.interceptor';
@@ -24,6 +25,7 @@ async function bootstrap() {
     new SuccessResponseInterceptor(),
     new SuccessChangeInterceptor(app.get(Reflector))
   );
+  app.use(cookieParser());
   app.enableCors();
   await app.listen(3000);
 }

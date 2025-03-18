@@ -6,8 +6,10 @@ import {
   HttpStatus,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import { Response } from 'express';
 
 import { ResourceName } from 'src/decorators/resource-name/resource-name.decorator';
 import { RegisterDto } from 'src/user/dto';
@@ -28,8 +30,20 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto);
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) response: Response
+  ) {
+    const tokenResponse = await this.authService.login(dto);
+
+    response.cookie('accessToken', tokenResponse.accessToken, {
+      httpOnly: true,
+    });
+    response.cookie('refreshToken', tokenResponse.refreshToken, {
+      httpOnly: true,
+    });
+
+    return { message: 'Successfully logged in!' };
   }
 
   @UseGuards(JwtAuthGuard)
@@ -39,12 +53,29 @@ export class AuthController {
   }
 
   @UseGuards(RefreshTokenGuard)
+  @HttpCode(HttpStatus.OK)
   @Get('refresh')
-  refreshTokens(@Req() req) {
+  async refreshTokens(
+    @Req() req,
+    @Res({ passthrough: true }) response: Response
+  ) {
     const userId = req.user.id as string;
     const refreshToken = req.user.refreshToken as string;
 
-    // return req.user;
-    return this.authService.refreshTokens(userId, refreshToken);
+    const tokenResponse = await this.authService.refreshTokens(
+      userId,
+      refreshToken
+    );
+
+    response.cookie('accessToken', tokenResponse.accessToken, {
+      httpOnly: true,
+    });
+    response.cookie('refreshToken', tokenResponse.refreshToken, {
+      httpOnly: true,
+    });
+
+    return {
+      message: 'Successfully logged in!',
+    };
   }
 }
