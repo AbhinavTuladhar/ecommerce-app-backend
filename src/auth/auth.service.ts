@@ -5,11 +5,12 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import * as argon from 'argon2';
 
 import { User } from 'src/entities/user.entity';
 import { RegisterDto } from 'src/user/dto';
 import { UserService } from 'src/user/user.service';
-import { verifyPassword } from 'src/utils/argon.utils';
+import { hashPassword, verifyPassword } from 'src/utils/argon.utils';
 
 import { LoginDto } from './dto';
 
@@ -38,12 +39,18 @@ export class AuthService {
       throw new ForbiddenException('The password is incorrect.');
     }
 
-    const token = await this.getToken(user);
+    const tokens = await this.getTokens(user);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
 
     return {
       message: 'Successfully logged in!',
-      access_token: token,
+      role: user.role,
+      ...tokens,
     };
+  }
+
+  async logout(userId: string) {
+    return this.userService.update(userId, { refreshToken: null });
   }
 
   async validateUser(email: string, password: string) {
@@ -60,13 +67,47 @@ export class AuthService {
     return user;
   }
 
-  async getToken(user: User) {
-    const payload = { id: user.id, role: user.role };
-    const token = await this.jwtService.signAsync(payload, {
-      algorithm: 'HS256',
-      expiresIn: '30m',
-      secret: this.configService.get('JWT_SECRET'),
-    });
-    return token;
+  async updateRefreshToken(userId: string, refreshToken: string) {
+    const hashedToken = await hashPassword(refreshToken);
+    await this.userService.update(userId, { refreshToken: hashedToken });
+  }
+
+  async getTokens(user: User) {
+    const payload = {
+      id: user.id,
+      role: user.role,
+      // refreshToken: user.refreshToken,
+    };
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        algorithm: 'HS256',
+        expiresIn: '1h',
+        secret: this.configService.get('JWT_SECRET'),
+      }),
+      this.jwtService.signAsync(payload, {
+        algorithm: 'HS256',
+        expiresIn: '10d',
+        secret: this.configService.get('JWT_SECRET'),
+      }),
+    ]);
+
+    return { accessToken, refreshToken };
+  }
+
+  async refreshTokens(userId: string, refreshToken: string) {
+    const user = await this.userService.findById(userId);
+    if (!user || !user.refreshToken) {
+      throw new ForbiddenException('Access Denied First');
+    }
+
+    const doesTokenMatch = await argon.verify(user.refreshToken, refreshToken);
+
+    if (!doesTokenMatch) {
+      throw new ForbiddenException('Access Denied Second');
+    }
+
+    const tokens = await this.getTokens(user);
+    await this.updateRefreshToken(user.id, refreshToken);
+    return tokens;
   }
 }
