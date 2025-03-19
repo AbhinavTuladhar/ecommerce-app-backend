@@ -12,11 +12,14 @@ import {
 import { Response } from 'express';
 
 import { ResourceName } from 'src/decorators/resource-name/resource-name.decorator';
+import { UserRole } from 'src/entities/user.entity';
 import { RegisterDto } from 'src/user/dto';
 
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto';
 import { JwtAuthGuard, RefreshTokenGuard } from './guard';
+import { RoleGuard } from './role/role.guard';
+import { Roles } from './roles/roles.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -49,6 +52,13 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Req() req) {
+    return req.user;
+  }
+
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Roles(UserRole.ADMIN)
+  @Get('is-admin')
+  isAdmin(@Req() req) {
     return req.user;
   }
 
