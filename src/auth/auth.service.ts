@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import * as argon from 'argon2';
 
 import { User } from 'src/entities/user.entity';
 import { RegisterDto } from 'src/user/dto';
@@ -100,10 +99,13 @@ export class AuthService {
       throw new ForbiddenException('Access Denied First');
     }
 
-    const doesTokenMatch = await argon.verify(user.refreshToken, refreshToken);
+    const doesTokenMatch = await verifyPassword(
+      user.refreshToken,
+      refreshToken
+    );
 
     if (!doesTokenMatch) {
-      throw new ForbiddenException('Access Denied Second');
+      throw new ForbiddenException('The refresh token is not valid.');
     }
 
     const tokens = await this.getTokens(user);
