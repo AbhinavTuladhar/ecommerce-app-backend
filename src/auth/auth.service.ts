@@ -6,7 +6,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
-import { User } from 'src/entities/user.entity';
+import { User, UserRole } from 'src/entities/user.entity';
 import { RegisterDto } from 'src/user/dto';
 import { UserService } from 'src/user/user.service';
 import { hashPassword, verifyPassword } from 'src/utils/argon.utils';
@@ -28,14 +28,25 @@ export class AuthService {
   async login(dto: LoginDto) {
     const { email, password } = dto;
 
-    const user = await this.userService.findByEmail(email);
-    if (!user) {
-      throw new NotFoundException('User not found.');
-    }
+    const user = await this.validateUser(email, password);
 
-    const doesPasswordMatch = await verifyPassword(user.password, password);
-    if (!doesPasswordMatch) {
-      throw new ForbiddenException('The password is incorrect.');
+    const tokens = await this.getTokens(user);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+    return {
+      message: 'Successfully logged in!',
+      role: user.role,
+      ...tokens,
+    };
+  }
+
+  async adminLogin(dto: LoginDto) {
+    const { email, password } = dto;
+
+    const user = await this.validateUser(email, password);
+
+    if (user.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('Admin credentials are required.');
     }
 
     const tokens = await this.getTokens(user);

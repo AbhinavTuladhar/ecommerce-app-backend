@@ -46,7 +46,25 @@ export class AuthController {
       httpOnly: true,
     });
 
-    return { message: 'Successfully logged in!' };
+    return { message: 'Successfully logged in as normal user!' };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('login/admin')
+  async adminLogin(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) response: Response
+  ) {
+    const tokenResponse = await this.authService.adminLogin(dto);
+
+    response.cookie('accessToken', tokenResponse.accessToken, {
+      httpOnly: true,
+    });
+    response.cookie('refreshToken', tokenResponse.refreshToken, {
+      httpOnly: true,
+    });
+
+    return { message: 'Successfully logged in as admin!' };
   }
 
   @UseGuards(JwtAuthGuard)
