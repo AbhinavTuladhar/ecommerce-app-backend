@@ -106,4 +106,17 @@ export class AuthController {
       message: 'Successfully logged in!',
     };
   }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('logout')
+  logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('accessToken', {
+      httpOnly: true,
+    });
+    response.clearCookie('refreshToken', {
+      httpOnly: true,
+    });
+
+    return { message: 'Successfully logged out!' };
+  }
 }
