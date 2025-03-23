@@ -120,7 +120,7 @@ export class AuthService {
     }
 
     const tokens = await this.getTokens(user);
-    await this.updateRefreshToken(user.id, refreshToken);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
 }
