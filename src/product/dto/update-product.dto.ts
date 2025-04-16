@@ -27,4 +27,8 @@ export class UpdateProductDto {
   @IsUUID()
   @IsOptional()
   categoryId?: string;
+
+  @ApiProperty()
+  @IsOptional()
+  image?: string | null;
 }
