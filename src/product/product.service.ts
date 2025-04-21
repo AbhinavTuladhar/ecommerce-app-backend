@@ -49,7 +49,13 @@ export class ProductService {
       const category = await this.categoryService.findById(categoryId);
       product.category = category;
     }
-    Object.assign(product, rest);
+
+    // Remove the image if the update DTO contains a null value for the image.
+    if (dto.image === null || dto.image === undefined) {
+      product.image = null;
+    } else {
+      Object.assign(product, rest);
+    }
     return this.productRepo.save(product);
   }
 
