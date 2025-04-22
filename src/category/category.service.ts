@@ -13,9 +13,11 @@ export class CategoryService {
     private readonly categoriesRepo: Repository<Category>
   ) {}
 
-  async findAll() {
+  async findAll(offset: number, limit: number) {
     const categories = await this.categoriesRepo.find({
       relations: ['products'],
+      skip: offset,
+      take: limit,
     });
 
     return categories.map(({ id, name, products }) => ({

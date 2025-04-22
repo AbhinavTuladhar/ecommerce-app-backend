@@ -16,15 +16,21 @@ export class ProductService {
     private readonly categoryService: CategoryService
   ) {}
 
-  getAll(category?: string) {
+  getAll(offset: number, limit: number, category?: string) {
     if (!category) {
-      return this.productRepo.find({ relations: ['category'] });
+      return this.productRepo.find({
+        relations: ['category'],
+        skip: offset,
+        take: limit,
+      });
     }
 
     return this.productRepo.find({
       where: {
         category: { name: ILike(category) },
       },
+      skip: offset,
+      take: limit,
     });
   }
 

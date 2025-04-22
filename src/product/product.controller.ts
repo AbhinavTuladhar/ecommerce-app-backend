@@ -22,8 +22,12 @@ export class ProductController {
 
   @HttpCode(200)
   @Get()
-  getAll(@Query() query: { category?: string }) {
-    return this.productService.getAll(query.category);
+  getAll(
+    @Query('category') category?: string,
+    @Query('offset') offset: number = 0,
+    @Query('limit') limit: number = 10
+  ) {
+    return this.productService.getAll(offset, limit, category);
   }
 
   @Get('/:id')
