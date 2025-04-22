@@ -14,7 +14,15 @@ export class CategoryService {
   ) {}
 
   async findAll() {
-    return this.categoriesRepo.find({ relations: ['products'] });
+    const categories = await this.categoriesRepo.find({
+      relations: ['products'],
+    });
+
+    return categories.map(({ id, name, products }) => ({
+      id,
+      name,
+      productCount: products.length,
+    }));
   }
   async create(dto: CreateCategoryDto) {
     const category = this.categoriesRepo.create({ name: dto.name });
@@ -33,10 +41,15 @@ export class CategoryService {
   }
 
   async findById(id: string) {
-    const category = await this.categoriesRepo.findOneBy({ id });
+    const category = await this.categoriesRepo.findOne({
+      where: { id },
+      relations: ['products'],
+    });
+
     if (!category) {
       throw new NotFoundException('Category not found');
     }
+
     return category;
   }
 }

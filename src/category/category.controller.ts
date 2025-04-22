@@ -23,6 +23,20 @@ export class CategoryController {
     return this.categoryService.findAll();
   }
 
+  @Get('/:id')
+  async findById(@Param('id', new ParseUUIDPipe()) id: string) {
+    const {
+      name,
+      products,
+      id: categoryId,
+    } = await this.categoryService.findById(id);
+    return {
+      name,
+      id: categoryId,
+      products: products.map((product) => product.id),
+    };
+  }
+
   @Post()
   @ResourceName('Category')
   create(@Body() dto: CreateCategoryDto) {
