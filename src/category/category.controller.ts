@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 
 import { ResourceName } from 'src/decorators/resource-name/resource-name.decorator';
@@ -19,8 +20,11 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  findAll() {
-    return this.categoryService.findAll();
+  findAll(
+    @Query('offset') offset: number = 0,
+    @Query('limit') limit: number = 10
+  ) {
+    return this.categoryService.findAll(offset, limit);
   }
 
   @Get('/:id')
