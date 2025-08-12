@@ -60,8 +60,11 @@ export class ProductService {
     if (dto.image === null || dto.image === undefined) {
       product.image = null;
     } else {
-      Object.assign(product, rest);
+      product.image = dto.image;
     }
+    Object.assign(product, rest);
+
+    console.log('the new product is ', product);
     return this.productRepo.save(product);
   }
 
